@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- vim: ts=3:sw=3
+  -->
+<template name="GoSam default template" version="1.0"
+	description="This template is used by gosam.py"
+	author="The GoSam Collaboration"
+	author-email="gosam@projects.hepforge.org">
+
+	<file src="configure.ac" class="Kinematics">
+		<only if-extension="autotools" />
+		<except if-internal="OLP_MODE" />
+	</file>
+	<file src="autogen.sh" class="Verbatim" executable="yes">
+		<only if-extension="autotools" />
+		<except if-internal="OLP_MODE" />
+	</file>
+	<file src="Makefile.am" class="Kinematics">
+		<only if-extension="autotools" />
+	</file>
+	<file src="Makefile" class="Kinematics" >
+		<except if-extension="autotools" />
+	</file>
+	<file src="Makefile.source" class="Kinematics" />
+	<file src="Makefile.conf" class="Kinematics">
+		<except if-file="exists" in-mode="normal" />
+		<except if-internal="OLP_MODE" />
+	</file>
+	<file src="config.sh" class="Kinematics" executable="yes">
+		<except if-extension="autotools" />
+	</file>
+	<file src="config.sh.in" class="Kinematics">
+		<only if-extension="autotools" />
+	</file>
+	<file src="acinclude.m4" class="Kinematics">
+		<only if-extension="autotools" />
+	</file>
+
+
+	<directory src="amplitude" dest="amplitude">
+		<only if-extension="reduze" />
+		<file src="../form.set" dest="form.set" class="Kinematics"/>
+		<file src="Makefile" class="Integrals">
+			<except if-extension="autotools" />
+		</file>
+		<file src="Makefile.am" class="Integrals">
+			<only if-extension="autotools" />
+		</file>
+		<file src="Makefile.dep" class="Integrals"/>
+		<file src="Makefile.source" class="Integrals"/>
+		<directory src="coefficients">
+			<foreach iterator="loops">
+				<directory src="loop" dest="%dloop" arguments="loop">
+                    <directory src="codegen" dest="codegen">
+						<file src="Makefile" class="Integrals"/>
+						<file src="mv.py" class="Verbatim"/>
+					</directory>
+					<directory src="src" dest="src">
+						<file src="invariants_hunk.cpp" class="Kinematics"/>
+						<file src="Makefile" class="Integrals"/>
+					</directory>
+				</directory>
+			</foreach>
+		</directory>
+		<file src="parameters.hpp" class="Model"/>
+		<file src="invariants.hpp" class="Kinematics"/>
+		<file src="typedef.hpp" class="Verbatim"/>
+        <foreach iterator="loops">
+			<file src="amplitude.hpp" dest="amplitudel%d.hpp" arguments="loop" class="Integrals"/>
+        </foreach>
+	</directory>
+
+	<directory src="codegen">
+        <except if-extension="reduze" />
+		<file src="abbrev.in" class="Multi">
+			<only if-internal="HAGGIES" />
+		</file>
+		<file src="abbrev.out" class="Integrals">
+			<only if-internal="HAGGIES" />
+		</file>
+		<file src="abbrevloc.out" class="Integrals">
+			<only if-internal="HAGGIES" />
+		</file>
+		<file src="color.in" class="Verbatim">
+			<only if-option="abbrev.color" value="haggies" />
+		</file>
+		<file src="color.out" class="Kinematics">
+			<only if-option="abbrev.color" value="haggies" />
+		</file>
+		<file src="functions.out" class="Kinematics">
+			<only if-internal="HAGGIES" />
+		</file>
+		<file src="model.out" class="Model">
+			<only if-internal="HAGGIES" />
+		</file>
+
+
+		<file src="haggies-l0.in" class="Multi">
+			<only if-internal="HAGGIES" />
+		</file>
+
+		<file src="haggies-l0-group.out" dest="haggies-l0.out"
+				class="Integrals">
+			<only if-option="group" value="true"/>
+			<except if-extension="formopt" />
+		</file>
+		<file src="haggies-l0-nogroup.out" dest="haggies-l0.out"
+				class="Kinematics">
+			<only if-option="group" value="false"/>
+			<except if-extension="formopt" />
+		</file>
+
+		<file src="haggies-l1.in" class="Multi">
+			<except if-extension="formopt" />
+		</file>
+		<file src="haggies-l1.out" class="Kinematics">
+			<except if-extension="formopt" />
+		</file>
+		<file src="helsum.frm" class="Kinematics" >
+			<only if-option="helsum" value="true" />
+		</file>
+		<file src="pythonin.py" class="Multi">
+			<only if-extension="formopt" />
+		</file>
+		<file src="colorin.py" class="Multi">
+			<except if-option="abbrev.color" value="haggies" />
+		</file>
+		<file src="haggies-l1d.out" class="Kinematics">
+			<only if-internal="GENERATE_DERIVATIVES"/>
+			<except if-extension="formopt" />
+		</file>
+		<file src="haggies-l1c.in" class="Multi">
+			<except if-option="genUV" value="false" />
+			<except if-extension="formopt" />
+		</file>
+		<file src="haggies-l1c.out" class="Kinematics">
+			<except if-option="genUV" value="false" />
+			<except if-extension="formopt" />
+		</file>
+
+		<file src="derive.frm" class="Kinematics">
+			<only if-extension="formopt" />
+			<only if-extension="derive" />
+		</file>
+		<file src="ninja.frm" class="Kinematics">
+			<only if-extension="formopt" />
+			<only if-extension="ninja" />
+		</file>
+		<file src="info.frm" class="Kinematics" />
+		<file src="golem.frm" class="Kinematics" >
+			<except if-extension="reduze" />
+		</file>
+		<file src="optimizeborn.hh" class="Integrals">
+			<only if-extension="formopt" />
+		</file>
+		<file src="finaloptimization.frm" class="Kinematics">
+			<only if-extension="formopt" />
+		</file>
+		<file src="ninjafinalopt.frm" class="Kinematics">
+			<only if-extension="ninja" />
+		</file>
+		<file src="buildfortran.py" class="Kinematics">
+			<only if-extension="formopt" />
+		</file>
+		<file src="buildfortran_d.py" class="Kinematics">
+			<only if-extension="formopt" />
+		</file>
+		<file src="buildfortran_tn2.py" class="Kinematics">
+			<only if-extension="formopt" />
+			<only if-extension="ninja" />
+		</file>
+		<file src="buildfortran_tn3.py" class="Kinematics">
+			<only if-extension="formopt" />
+			<only if-extension="ninja" />
+		</file>
+		<file src="buildfortran_tmu.py" class="Kinematics">
+			<only if-extension="formopt" />
+			<only if-extension="ninja" />
+		</file>
+		<file src="buildfortranborn.py" class="Kinematics">
+			<only if-extension="formopt" />
+		</file>
+		<file src="buildfortranct.py" class="Kinematics">
+			<only if-extension="formopt" />
+		</file>		
+		<file src="t2f.py" class="Verbatim"/>
+		<file src="buildmodel.py" class="Model">
+			<only if-extension="formopt" />
+		</file>
+		<file src="buildcolor.py" class="Kinematics">
+			<except if-option="abbrev.color" value="haggies" />
+		</file>
+		<!-- file src="fermion_flow.hh" class="Integrals" /-->
+		<file src="shiftmomenta.prc" class="Integrals" />
+		<file src="r2.hh" class="Integrals" />
+		<file src="r2integrals.hh" class="Verbatim" />
+		<file src="lightconedecomp.prc" class="Kinematics"/>
+		<file src="spva.prc" class="Kinematics"/>
+		<file src="diagsum.frm" dest="diagsum.frm"
+		                class="Integrals" >
+			<only if-option="diagsum" value="true"/>
+		</file>
+		<file src="ct.hh" class="Integrals">
+			<except if-option="genUV" value="false"/>
+		</file>
+	</directory>
+
+    <directory src="codegen">
+        <file src="filter.py" class="Verbatim"/>
+        <file src="color.frm" class="Kinematics"/>
+        <file src="coloropt.frm" class="Kinematics">
+            <only if-option="abbrev.color" value="form" />
+        </file>
+        <file src="modelopt.frm" class="Kinematics">
+            <only if-extension="formopt" />
+        </file>
+        <file src="abbreviate.hh" class="Kinematics"/>
+        <file src="replace.hh" class="Kinematics">
+            <only if-extension="formopt" />
+            <only if-option="helsum" value="true" />
+        </file>
+        <file src="symbols.hh" class="Kinematics"/>
+        <file src="spinney.hh" class="Verbatim"/>
+        <file src="color.hh" class="Verbatim"/>
+        <file src="vertices.hh" class="Kinematics"/>
+        <file src="legs.hh" class="Verbatim"/>
+        <file src="propagators.hh" class="Verbatim"/>
+        <file src="func.txt" class="Model" />
+        <file src="func.hh" class="Model" >
+            <only if-extension="formopt" />
+        </file>
+    </directory>
+
+	<directory src="codegen" dest="." usedby="qgraf">
+		<file src="form.sty" class="Verbatim" usedby="qgraf"/>
+		<file src="formct.sty" class="Verbatim" usedby="qgraf"/>
+		<file src="topolopy.sty" class="Verbatim" usedby="qgraf"/>
+		<file src="dot.sty" class="Verbatim" usedby="qgraf"/>
+		<file src="reduze.sty" class="Verbatim" usedby="qgraf">
+            <only if-extension="reduze" />
+        </file>
+	</directory>
+    
+    <directory src="codegen">
+        <only if-extension="reduze" />
+        <directory src="reduze">
+            <foreach iterator="loops">
+                <directory src="loop" dest="%dloop" arguments="loop">
+                    <file src="reduze_setup.yaml" class="Integrals"/>
+                    <file src="reduze_insert.yaml" class="Integrals"/>
+                    <directory src="config">
+                        <file src="kinematics.yaml" class="Integrals"/>
+                        <file src="global.yaml" class="Integrals"/>
+                    </directory>
+                </directory>
+            </foreach>
+        </directory>
+        <directory src="secdec">
+            <foreach iterator="loops">
+                <directory src="loop" dest="%dloop" arguments="loop">
+                    <file src="Makefile" class="Verbatim"/>
+                </directory>
+            </foreach>
+        </directory>
+        <file src="toreduze.py" class="Verbatim"/>
+        <file src="tosecdec.py" class="Verbatim"/>
+        <foreach iterator="loops">
+            <file src="secdec.m" dest="secdecl%d.m" arguments="loop" class="Integrals"/>
+            <file src="secdec.input" dest="secdecl%d.input" arguments="loop" class="Integrals"/>
+            <file src="secdec.py" dest="secdecl%d.py" arguments="loop" class="Integrals"/>
+        </foreach>
+        <file src="translate_reduze.py"  class="Verbatim"/>
+        <file src="reduze.hh" class="Verbatim"/>
+        <file src="secdec.hh" class="Verbatim"/>
+        <file src="series.hh" class="Verbatim"/>
+        <file src="seriesprocedures.hh" class="Verbatim"/>
+        <file src="golemreduze.frm" class="Kinematics"/>
+        <file src="golemreduzesum.frm" class="Integrals"/>
+        <file src="golemreduzesecdec.frm" class="Verbatim"/>
+        <file src="golemreduzesplit.frm" class="Verbatim"/>
+        <file src="golemreduzecode.frm" class="Verbatim"/>
+    </directory>
+    
+    <directory src=".." dest="." usedby="reduze">
+        <only if-extension="reduze" />
+        <foreach iterator="loops">
+            <file src="integralfamilies-%dloop.yaml" dest="codegen/reduze/%dloop/config/integralfamilies.yaml" arguments="loop" usedby="reduze"/>
+        </foreach>
+        <file src="projectors.hh" dest="codegen/projectors.hh" usedby="reduze"/>
+    </directory>
+    
+	<directory src="common">
+        <except if-extension="reduze" />
+		<file src="Makefile" class="Kinematics">
+			<except if-extension="autotools" />
+		</file>
+		<file src="Makefile.am" class="Kinematics">
+			<only if-extension="autotools" />
+		</file>
+		<file src="Makefile.source" class="Kinematics"/>
+		<file src="Makefile.dep" class="Kinematics"/>
+		<file src="config.f90" class="Kinematics">
+			<except if-file="exists" in-mode="normal" />
+		</file>
+		<file src="../form.set" dest="form.set" class="Kinematics"/>
+		<file src="dipoles.f90" class="Kinematics" />
+		<file src="kinematics.f90" class="Kinematics"/>
+		<file src="rambo.f90" class="Kinematics"/>
+		<file src="util.f90" class="Kinematics"/>
+		<file src="accu.f90" class="Kinematics"/>
+		<file src="groups.f90" class="Integrals"/>
+		<file src="scalar_cache.f90" class="Integrals"/>
+		<file src="globalsl1.f90" class="Kinematics"/>
+		<file src="precision_pjfry.f90" class="Model">
+			<only if-extension="pjfry"/>
+		</file>
+		<file src="pjfry95pg.f90" class="Model">
+			<only if-extension="pjfry"/>
+		</file>
+		<file src="pjfry_comb.f90" class="Model">
+			<only if-extension="pjfry"/>
+		</file>
+		<file src="custompropagator.f90" class="Model">
+			<only if-internal="CUSTOM_SPIN2_PROP"/>
+			<except if-file="exists" in-mode="normal" />
+                </file>
+		<file src="ew_ct.f90" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>
+		<file src="declmasses.h" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>
+		<file src="declscalars.h" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>                                
+		<file src="dzdecl.h" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>                            
+		<file src="ddrrdecl.h" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>                                            
+		<file src="realparam.h" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+		</file>                                                
+	</directory>
+
+	<directory src="doc">
+		<file src="axodraw.sty" class="Verbatim"/>
+		<file src="gind.ist" class="Verbatim"/>
+		<file src="Makefile.source" class="Verbatim"/>
+		<file src="Makefile" class="Kinematics">
+			<except if-extension="autotools" />
+		</file>
+		<file src="Makefile.am" class="Kinematics">
+			<only if-extension="autotools" />
+		</file>
+		<file src="process.tex" class="Integrals_doc"/>
+		<file src="redo.log" class="Kinematics"/>
+	</directory>
+
+	<directory src="doc" dest="." usedby="qgraf">
+		<file src="pyxo.sty" class="Verbatim" usedby="qgraf">
+			<except if-option="pyxodraw" value="false" />
+		</file>
+	</directory>
+
+	<directory src="matrix">
+        <except if-extension="reduze" />
+		<file src="Makefile" class="Kinematics">
+			<except if-extension="autotools" />
+		</file>
+		<file src="Makefile.am" class="Kinematics">
+			<only if-extension="autotools" />
+		</file>
+		<file src="Makefile.dep" class="Kinematics"/>
+		<file src="Makefile.source" class="Verbatim"/>
+		<file src="matrix.f90" class="Kinematics"/>
+		<file src="test.f90" class="Kinematics">
+			<except if-file="exists" in-mode="normal" />
+		</file>
+		<file src="ltest.dat" class="Verbatim">
+			<except if-file="exists" in-mode="normal" />
+		</file>
+		<foreach iterator="crossings">
+			<file src="crossing.f90"
+				dest="%s_matrix.f90" arguments="name"
+				class="Kinematics"/>
+		</foreach>
+	</directory>
+
+	<foreach iterator="helicity">
+		<directory src="helicity" dest="helicity%d" arguments="helicity">
+			<except if-extension="reduze" />
+			<file src="Makefile" class="Integrals">
+				<except if-extension="autotools" />
+			</file>
+			<file src="Makefile.am" class="Integrals">
+				<only if-extension="autotools" />
+			</file>
+			<file src="Makefile.dep" class="Integrals"/>
+			<file src="Makefile.source" class="Integrals"/>
+			<file src="../form.set" dest="form.set" class="Kinematics"/>
+			<file src="diagramsl0.f90" class="Multi">
+				<only if-option="group" value="false"/>
+			</file>
+			<file src="diagramsl0fr5.f90" class="Multi">
+				<only if-internal="REQUIRE_FR5"/>
+				<only if-option="group" value="false"/>
+			</file>
+			<file src="samurai.f90" dest="samuraih%d.f90" arguments="helicity"
+				class="Integrals">
+				<only if-extension="samurai" />
+				<except if-option="r2" value="only" />
+				<filter name="Fortran90" width="80"/>
+			</file>
+			<file src="ninja.f90" dest="ninjah%d.f90" arguments="helicity"
+				class="Integrals">
+				<only if-extension="ninja" />
+				<except if-option="r2" value="only" />
+				<filter name="Fortran90" width="80"/>
+			</file>
+			<file src="golem95.f90" dest="golem95h%d.f90" arguments="helicity"
+				class="Integrals">
+				<only if-extension="golem95" />
+				<except if-option="r2" value="only" />
+				<filter name="Fortran90" width="80"/>
+			</file>
+			<file src="amplitude.f90" dest="amplitudeh%d.f90"
+				arguments="helicity" class="Integrals" />
+			<file src="globals.f90" class="Kinematics" />
+			<file src="diagramsct.f90" class="Multi">
+				<except if-option="genUV" value="false"/>
+			</file>
+		</directory>
+	</foreach>
+
+	<directory src="sum">
+		<only if-option="helsum" value="true" />
+        <except if-extension="reduze" />
+		<file src="Makefile.source" class="Integrals"/>
+		<file src="Makefile.dep" class="Integrals"/>
+		<file src="Makefile" class="Integrals">
+			<except if-extension="autotools" />
+		</file>
+		<file src="Makefile.am" class="Integrals">
+			<only if-extension="autotools" />
+		</file>
+		<file src="globals.f90" class="Kinematics"/>
+      <file src="../form.set" dest="form.set" class="Kinematics"/>
+      <file src="amplitude.f90" class="Integrals" />
+      <file src="samurai.f90"	class="Integrals" >
+            <only if-extension="samurai" />
+            <except if-option="r2" value="only" />
+            <filter name="Fortran90" width="80"/>
+      </file>
+		<file src="golem95.f90"	class="Integrals">
+				<only if-extension="golem95" />
+				<except if-option="r2" value="only" />
+				<filter name="Fortran90" width="80"/>
+		</file>
+		<file src="ninja.f90" class="Integrals">
+				<only if-extension="ninja" />
+				<except if-option="r2" value="only" />
+				<filter name="Fortran90" width="80"/>
+		</file>
+		<file src="diagramsl0.f90" class="Integrals" />
+	</directory>
+</template>

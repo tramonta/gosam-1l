@@ -1,0 +1,26 @@
+[% '
+	Template file for the Makefile in process_dir
+	This Makefile is used to generate the source files
+	in the main directory.
+' %]# vim: ts=3:sw=3
+
+SUBDIRS=doc[%
+@if extension reduze %] amplitude[%
+@else %] common[% @if helsum %] sum[% @end @if %][%
+@for helicities generated %] helicity[% helicity %][%
+@end @for helicities %] matrix[%
+@end @if %]
+
+[% @if internal OLP_MODE %]
+include ../Makefile.conf[%
+@else %]
+include Makefile.conf[%
+@end @if %]
+
+
+source:
+	@for dir in $(SUBDIRS); \
+	do \
+		$(MAKE) -C $${dir} -f Makefile $@; \
+	done
+

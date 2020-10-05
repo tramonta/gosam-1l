@@ -1,0 +1,173 @@
+[%' vim: syntax=golem
+	 This template defines the Makefile.source that go under
+    <process_dir>/amplitude*/
+'%]# vim: ts=3:sw=3
+[% @if internal OLP_MODE %]
+include ../../Makefile.conf[%
+@else %]
+include ../Makefile.conf[%
+@end @if %]
+
+# @date: [% time_stamp format=%x~%X %]
+
+FORM_OPT= \
+	-D PROCESSPATH=.. \
+	-D PWD=. \
+	-p ..:../codegen \
+	-M -q
+
+.SUFFIXES:
+
+.PHONY: all_source [% @for loops_generated %] prepare_reductionl[%loop%] reductionl[%loop%][% @end @for %]
+
+[% @if generate_lo_diagrams %]
+DIAGRAMS_TREE=[%
+	@for elements topolopy.keep.tree %] \
+		d[%$_%]l0.txt[%
+	@end @for %]
+
+TXT_TREE=$(subst .cc,.txt,$(DIAGRAMS_TREE))
+
+SOURCE_TREE= $(DIAGRAMS_TREE)
+[% @end @if generate_lo_diagrams %]
+
+[% @for loops_generated %][%
+@if is_first %]
+TRANSLATE_REDUZE=$(PYTHON) ../codegen/translate_reduze.py[%
+@end @if %]
+
+REDUZE_PATH_L[%loop%]=../codegen/reduze/[%loop%]loop/
+
+DIAGRAMS_L[%loop%]=[%
+	@for elements loop.keep.diagrams %] \
+		d[%$_%]l[%loop%].txt[%
+	@end @for %]	
+
+SOURCE_L[%loop%]=reduze_setup_l[%loop%]-stamp \
+	$(DIAGRAMS_L[%loop%]) \
+	integralsl[%loop%].m \
+	reduze_reduce_l[%loop%]-stamp \
+	l[%loop%].txt \
+	reducedl[%loop%].txt \
+	prepare_secdec_l[%loop%]-stamp \
+	secdecnamesl[%loop%].hh \
+	prepare_code_l[%loop%]-stamp \
+	compile_code_l[%loop%]-stamp[%
+@end @for %]
+
+SOURCE_VIRT=[% @for loops_generated %]$(SOURCE_L[%loop%]) [% @end @for %]
+
+all_source: $(SOURCE_TREE) $(SOURCE_VIRT)
+
+prepare_reduction : [% @for loops_generated %] prepare_reductionl[%loop%][% @end @for %]
+reduction : [% @for loops_generated %] reductionl[%loop%][% @end @for %]
+
+
+
+[% @for loops_generated %]
+
+#
+# STAGE 1
+#
+
+# Reduze also creates: reduze_match.yaml and reduzeshiftsl#loop.hh
+reduze_setup_l[%loop%]-stamp:
+	@echo Reduze is setting up integral families @ [%loop%] loop
+	@cd $(REDUZE_PATH_L[%loop%]) && $(REDUZE) reduze_setup.yaml > reduze_setup.log
+	@echo Python is processing integral families @ [%loop%] loop
+	@$(TRANSLATE_REDUZE) \
+		-i $(REDUZE_PATH_L[%loop%])/config/integralfamilies.yaml \
+		-k $(REDUZE_PATH_L[%loop%])/config/kinematics.yaml \
+		-c $(REDUZE_PATH_L[%loop%])/sectormappings/crossings.yaml \
+		-o allfamilies.yaml \
+		-m reduzemapl[%loop%].hh \
+		-s reduzesptopl[%loop%].hh
+	@touch reduze_setup_l[%loop%]-stamp
+
+[% @for elements loop.keep.diagrams %]
+d[%$_%]l[%loop%].txt: ../diagrams-[%loop%].hh reduze_setup_l[%loop%]-stamp
+	@echo Form is processing loop diagram [%$_%] @ [%loop%] loop
+	@$(FORM) $(FORM_OPT) \
+	    -w$(FORM_THREADS) \
+	    -D LOOPS=[%loop%] \
+	    -D DIAG=[%$_%] \
+	    -D OUTFILE=d[%$_%]l[%loop%] \
+	    ../codegen/golemreduze.frm
+[% @end @for %]
+
+integralsl[%loop%].txt : l[%loop%].txt
+l[%loop%].txt: $(DIAGRAMS_L[%loop%])
+	@echo Form is summing loop diagrams @ [%loop%] loop
+	@$(FORM) $(FORM_OPT) \
+	    -w$(FORM_THREADS) \
+	    -D LOOPS=[%loop%] \
+	    ../codegen/golemreduzesum.frm
+
+prepare_reductionl[%loop%] : integralsl[%loop%].m
+integralsl[%loop%].m : integralsl[%loop%].txt reduze_setup_l[%loop%]-stamp
+	@echo Python is processing the integrals @ [%loop%] loop
+	@$(PYTHON) ../codegen/toreduze.py \
+                    -i integralsl[%loop%].txt \
+                    -t integralsl[%loop%].m \
+                    -s $(REDUZE_PATH_L[%loop%])/sectormappings/crss.yaml \
+                    -y $(REDUZE_PATH_L[%loop%])reduze_reduce.yaml
+
+reductionl[%loop%] : reduze_reduce_l[%loop%]-stamp
+reduze_reduce_l[%loop%]-stamp : integralsl[%loop%].m
+	@echo Reduze is reducing the compact recursive sector selection \(CRSS\) @ [%loop%] loop
+	@cd $(REDUZE_PATH_L[%loop%]) && $(REDUZE) reduze_reduce.yaml  > reduze_reduce.log
+	@touch reduze_reduce_l[%loop%]-stamp
+
+reduze_insert_l[%loop%]-stamp : reduze_reduce_l[%loop%]-stamp #reductionl[%loop%]
+	@cd $(REDUZE_PATH_L[%loop%]) && $(REDUZE) reduze_insert.yaml > reduze_insert.log
+	@touch reduze_insert_l[%loop%]-stamp
+
+#
+# STAGE 2
+#
+
+# TODO: calculate ORD
+reducedl[%loop%].txt: reduze_insert_l[%loop%]-stamp
+	@echo Form is applying the reduction to the loop diagrams @ [%loop%] loop
+	@$(FORM) $(FORM_OPT) \
+		-w$(FORM_THREADS) \
+		-D LOOPS=[%loop%] \
+		-D ORD=2 \
+		../codegen/golemreduzesecdec.frm
+
+secdecintegralsl[%loop%].txt : reducedl[%loop%].txt
+
+
+# Creates the directory ""
+#TODO: directory name
+prepare_secdec_l[%loop%]-stamp: secdecintegralsl[%loop%].txt
+	@echo Python is preparing integrals for SecDec @ [%loop%] loop
+	@$(PYTHON) ../codegen/tosecdec.py \
+		-i secdecintegralsl[%loop%].txt \
+		-k ../codegen/secdecl[%loop%].m \
+		-r ../codegen/secdecl[%loop%].input \
+		-p ../codegen/secdecl[%loop%].py \
+		-o ../codegen/secdec/[%loop%]loop \
+		-a amplitudel[%loop%].hpp
+	@touch prepare_secdec_l[%loop%]-stamp
+
+# Run SecDec on integrals
+secdecnamesl[%loop%].hh: prepare_secdec_l[%loop%]-stamp
+	@echo SecDec is decomposing integrals @ [%loop%] loop
+	@$(MAKE) -C ../codegen/secdec/[%loop%]loop
+	@$(FORM) $(FORM_OPT) \
+		-w$(FORM_THREADS) \
+		-D LOOPS=[%loop%] \
+		../codegen/golemreduzesplit.frm
+
+# Generate Fortran/C++/C
+prepare_code_l[%loop%]-stamp: secdecnamesl[%loop%].hh
+	@$(MAKE) -C coefficients/[%loop%]loop/codegen
+	@touch prepare_code_l[%loop%]-stamp
+
+# Compile Fortran/C++/C
+compile_code_l[%loop%]-stamp: prepare_code_l[%loop%]-stamp
+	@$(MAKE) -C coefficients/[%loop%]loop/src
+	@touch compile_code_l[%loop%]-stamp
+
+[% @end @for %]
