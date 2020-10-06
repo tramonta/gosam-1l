@@ -17,8 +17,6 @@ PATTERN_TOPOLOPY_VIRT = "topovirt"
 PATTERN_TOPOLOPY_HIGHER_VIRT = "topo%svirt"
 
 PATTERN_DOTSTY_HIGHER_VIRT = "dot%svirt"
-PATTERN_REDUZE_NLO_VIRT = "reduze1loop"
-PATTERN_REDUZE_HIGHER_VIRT = "reduze%sloop"
 
 AUTHORS = {
       "Mauro Chiesa": ["mauro.chiesa@physik.uni-wuerzburg.de"],

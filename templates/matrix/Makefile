@@ -8,14 +8,14 @@ include ../Makefile.conf[%
 @end @if %]
 
 
-PROCESS_CFLAGS=[% @if extension reduze %][% @else %][%
-    @if helsum %] \
+PROCESS_CFLAGS=[% @if helsum %]
 		-I../sum[%
     @end @if %][%
     @for helicities generated %] \
 		-I../helicity[%helicity%][%
-    @end @for helicities %][% @end @if %] \
+    @end @for helicities %] \
 		-I../common
+
 
 PROCESS_LDFLAGS=$(shell ${SHELL} ../config.sh -plibs)
 

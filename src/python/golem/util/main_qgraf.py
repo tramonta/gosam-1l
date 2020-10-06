@@ -250,7 +250,6 @@ def run_qgraf(conf, in_particles, out_particles):
 			conf.getBooleanProperty("generate_uv_counterterms")
 	flag_draw_diagrams = conf.getProperty(golem.properties.pyxodraw)
 	flag_topolopy = True
-	flag_reduze = conf.getBooleanProperty("__REDUZE__")
 	flag_dot2tex = conf.getBooleanProperty("__dot2tex__")
 	loops_to_generate = conf.getListProperty("loops_to_generate")
 	flag_internal_ct=conf["modeltype"]=='smdiag_complex_ct' or \
@@ -273,14 +272,12 @@ def run_qgraf(conf, in_particles, out_particles):
 	formct_sty  = "formct.sty"
 	topo_sty    = "topolopy.sty"
 	dot_sty     = "dot.sty"
-	reduze_sty  = "reduze.sty"
 
 	form_ext    = ".hh"
 	python_ext  = ".py"
 	pyo_ext     = ".pyo"
 	pyc_ext     = ".pyc"
 	log_ext     = ".log"
-	yaml_ext    = ".yaml"
 
 	cleanup_files = [ "qgraf.dat", form_sty, pyxo_sty, topo_sty]
 
@@ -374,12 +371,6 @@ def run_qgraf(conf, in_particles, out_particles):
 			write_qgraf_dat(path, topo_sty, consts.MODEL_LOCAL, output_name,
 				options, new_verbatim, in_particles, out_particles, [], 1)
 			run_qgraf_dat(conf, output_name, log_name)
-                if flag_reduze:
-	          output_name_reduze = consts.PATTERN_REDUZE_NLO_VIRT + yaml_ext
-	          log_name_reduze = consts.PATTERN_REDUZE_NLO_VIRT + log_ext
-	          write_qgraf_dat(path, reduze_sty, consts.MODEL_LOCAL, output_name_reduze,
-			    options, new_verbatim, in_particles, out_particles, [] ,1)
-	          run_qgraf_dat(conf, output_name_reduze, log_name_reduze)
 			
 			
 			
@@ -526,12 +517,6 @@ def run_qgraf(conf, in_particles, out_particles):
 				options, new_verbatim, in_particles, out_particles, [], looporder)
 			run_qgraf_dat(conf, output_name, log_name)
 
-		if flag_reduze:
-			output_name_reduze = consts.PATTERN_REDUZE_HIGHER_VIRT % looporder + yaml_ext
-			log_name_reduze = consts.PATTERN_REDUZE_HIGHER_VIRT % looporder + log_ext
-			write_qgraf_dat(path, reduze_sty, consts.MODEL_LOCAL, output_name_reduze,
-			options, new_verbatim, in_particles, out_particles, [] ,looporder)
-			run_qgraf_dat(conf, output_name_reduze, log_name_reduze)
 			
 		
 

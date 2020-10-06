@@ -14,8 +14,6 @@ components = {
                "Form": REQUIRED,
                "QGraf": REQUIRED,
                "Java": OPTIONAL,
-               "Yaml": OPTIONAL,
-               "Reduze": OPTIONAL,
                "SymPy": OPTIONAL
              }
 

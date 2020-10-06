@@ -450,10 +450,6 @@ form_tmp = Property("form.tempdir",
    str,
    "/tmp")
 
-reduze_bin = Property("reduze.bin",
-   """\
-   Points to reduze executable""",str,"reduze")
-
 template_path = Property("templates",
    """\
    Path pointing to the directory containing the template
@@ -558,7 +554,7 @@ reduction_programs = Property("reduction_programs",
       """,
       list,
       "ninja,golem95",
-      options=["ninja","samurai","golem95","pjfry","reduze"]
+      options=["ninja","samurai","golem95","pjfry"]
    )
 
 polvec_method = Property("polvec",
@@ -624,7 +620,7 @@ extensions = Property("extensions",
       "qcdloop", "avh_olo", "looptools", "gaugecheck", "derive",
       "generate-all-helicities", "olp_daemon","olp_badpts", "olp_blha1", "numpolvec",
       "f77", "no-fr5","ninja","formopt","customspin2prop","shared","cdr","noderive",
-      "noformopt","reduze","dot2tex","tracify","better_num"])
+      "noformopt","dot2tex","tracify","better_num"])
 
 select_lo_diagrams = Property("select.lo",
    """\
@@ -774,15 +770,6 @@ filter_module = Property("filter.module",
    """,
    str,"")
 
-projectors = Property("projectors",
-   """\
-   path to the form file containing projectors """,str,"projectors.hh")
-integral_families_1loop = Property("integral_families_1loop",
-  """\
-  path to the yaml file containing the integral families """,str,"integralfamilies-1loop.yaml")
-integral_families_2loop = Property("integral_families_2loop",
-  """\
-  path to the yaml file containing the integral families """,str,"integralfamilies-2loop.yaml")
 
 debug_flags = Property("debug",
    """\
@@ -1308,10 +1295,6 @@ properties = [
    haggies_bin,
    fc_bin,
    python_bin,
-   projectors,
-   integral_families_1loop,
-   integral_families_2loop,
-   reduze_bin,
 
    fcflags_ninja,
    ldflags_ninja,
@@ -1331,7 +1314,7 @@ properties = [
    form_factor_nlo
 ]
 
-REDUCTION_EXTENSIONS = ["samurai", "golem95", "ninja", "pjfry", "reduze"]
+REDUCTION_EXTENSIONS = ["samurai", "golem95", "ninja", "pjfry"]
 
 def getExtensions(conf):
    ext_name = str(extensions)
@@ -1394,7 +1377,6 @@ def setInternals(conf):
    conf["__GENERATE_NINJA_TRIPLE__"] = "ninja" in extensions
    conf["__GENERATE_NINJA_DOUBLE__"] = "ninja" in extensions
    
-   conf["__REDUZE__"] = "reduze" in extensions
    conf["__dot2tex__"] = "dot2tex" in extensions
 
    conf["__CUSTOM_SPIN2_PROP__"] = "customspin2prop" in extensions

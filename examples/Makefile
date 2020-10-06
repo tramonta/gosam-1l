@@ -51,7 +51,7 @@ runtests : $(ALL_TESTS)
 
 # TODO: merge ddtt+ggtt --> olp
 # TODO: write: tttt, tbWp_tree
-# TODO: include: eett_NLOCT, gggh_reduze, gggh
+# TODO: include: eett_NLOCT, gggh
 SELECTED_TESTS = bghb ggtt ggtt_ufo eeuu_autotools ggHg gggg_tree gggg gggz hyy s-channel_single-top udene
 
 .SILENT .PHONY : check_selection

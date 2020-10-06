@@ -10,7 +10,6 @@ from golem.topolopy.objects import Diagram, Propagator, Leg, LoopCache
 import golem.topolopy.userlib
 from golem.util.config import GolemConfigError
 from golem.util.tools import error, warning, debug
-from yaml import load, load_all, dump
 
 def setup_list(prop, conf, loop_order=None):
    result = []
@@ -380,31 +379,6 @@ def analyze_higher_loop_diagrams(diagrams, model, conf, onshell, loop_order,
 
    return keep, keep_tot
 
-
-
-def analyze_yaml(path, conf, keep_loop, loop_yaml):
-   zero = golem.util.tools.getZeroes(conf)
-   loop_file = os.path.join(path, "%s.yaml" % loop_yaml)
-   backup_loop_file = os.path.join(path, "%s_orig.yaml" % loop_yaml)
-   outfile_loop = os.path.join(path, loop_yaml+"_out.yaml")
-   with open(outfile_loop,'w') as outfile:
-     with open(loop_file,'r') as infile:
-       for data in load_all(infile):
-         try:
-           diagram = data["diagram"]
-         except KeyError:
-           # `data` does not describe a diagram
-           # --> write to output unchanged and continue
-           outfile.write(dump(data, width=10000, explicit_start=True))
-         else:
-           # parse the diagram
-           diag_number = diagram["name"]
-           if diag_number in keep_loop:
-             replace_zeroes(data,zero)
-             outfile.write(dump(data, width=10000, explicit_start=True))
-
-   shutil.move(loop_file, backup_loop_file)
-   shutil.move(outfile_loop, loop_file)
 
 
 
