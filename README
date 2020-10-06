@@ -4,7 +4,7 @@
 # ( (/\( () )\__ \ /__\  )    (  ===   | |        Matrix Element Generator     #
 #  \__/ \__/ (___/(_)(_)(_/\/\_)       | |___           Version 2.x.x          #
 #                                                                              #
-#                                    (c) The GoSam Collaboration 2011-2016     #
+#                                    (c) The GoSam Collaboration 2020-2025     #
 #                                                                              #
 #        AUTHORS:                                                              #
 #        * Mauro Chiesa                  <mauro.chiesa@physik.uni-wuerzburg.de>#
@@ -34,11 +34,16 @@
 #  GoSam or any modified version of it or any code linking to GoSam            #
 #  or parts of it should make a clear reference to the publication:            #
 #                                                                              #
+#      M. Chiesa et al.,                                                       #
+#      ``Automation of electroweak corrections for LHC processes'',            #
+#      J. Phys. G 43 (2016) 1, 013002                                          #
+#      [arXiv:1507.08579 [hep-ph]]                                             #
+#                                                                              #
 #      G. Cullen et al.,                                                       #
 #      ``GoSam-2.0: a tool for automated one-loop calculations                 #
 #                        within the Standard Model and Beyond'',               #
-#      Eur. Phys. J. C 74 (2014) 8,  3001                                      #
-#      [arXiv:1404.7096 [hep-ph]].                                             #
+#      Eur. Phys. J. C 74 (2014) 8, 3001                                       #
+#      [arXiv:1404.7096 [hep-ph]]                                              #
 ################################################################################
 
 
