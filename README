@@ -49,13 +49,13 @@ GoSam is a general one-loop evaluator for matrix elements.
 The program produces Fortran 90 code from a given process
 description by evaluating Feynman diagrams and translating
 the associated one-loop diagrams into code suitable for the
-evaluation with Samurai, Golem95 and/or PJFry.
+evaluation with Golem95, Ninja or Samurai.
 
 Download
 --------
 
-GoSam-1L can be downloaded from:
->>> insert git command
+GoSam-1L can be downloaded using the command:
+$ git clone https://github.com/tramonta/gosam-1l.git
 
 
 Installation
