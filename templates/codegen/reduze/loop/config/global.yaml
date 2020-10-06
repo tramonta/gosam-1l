@@ -1,6 +1,0 @@
-global_symbols:
-  coupling_constants: []
-  su_n_dimensions:
-    adjoint: Na
-    fundamental: Nc
-  space_time_dimension: dimS
