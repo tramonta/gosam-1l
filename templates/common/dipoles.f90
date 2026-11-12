@@ -431,6 +431,9 @@ contains
    function I_if_qed(mu_sq, vec, I, J)
       !  Again we omit the prefactor
       ! $-\alpha_s/(2\pi)(4\pi)^\epsilon/\Gamma(1-\epsilon)$
+      ! Massive initial-state particles are treated like massive final-state
+      ! ones: in QED the 1/eps poles of a massive leg come only from soft
+      ! photons, which do not distinguish initial from final state.
       use [% process_name asprefix=\_ %]model
       implicit none
       real(ki), intent(in) :: mu_sq
@@ -450,17 +453,6 @@ contains
       enddo
       [%
   @for particles initial charged index=index_a charge=charge_a %][%
-     @if is_massive %]
-      if ([% mass %] .ne. 0 ) then
-        PRINT*, "! WARNING: massive initial state partons are not"
-        PRINT*, "!          considered in this dipole framework. Please,"
-        PRINT*, "!          provide yourself, whatever you find"
-        PRINT*, "!          an appropriate piece of code."
-        PRINT*, "!"
-        PRINT*, "!          YOU HAVE BEEN WARNED!"
-        PRINT*, "!"
-      end if[% @end @if is_massive %][%
-
         @for particles final charged index=index_j charge=charge_j mass=mass_j 
              massive=is_massive_j %]
 
@@ -478,9 +470,12 @@ contains
       if (flag) then
               ncs=1.0_ki
               term = V_SING_QED(s_ja, [%
-              @if is_massive_j %][% mass_j %][%
+              @if is_massive_j %]real([% mass_j %], ki)[%
               @else %]0.0_ki[% 
-              @end @if %], 0.0_ki)
+              @end @if %], [%
+              @if is_massive %]real([% mass %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %])
               term=term*ncs*([%charge_a%]_ki)*([%charge_j%]_ki/9.0_ki)
               term(1) = term(1) + log_s * term(2)
 
@@ -498,9 +493,12 @@ contains
       if (flag) then
               ncs=1.0_ki
               term = V_SING_QED(s_ja, [%
-              @if is_massive_j %][% mass_j %][%
+              @if is_massive_j %]real([% mass_j %], ki)[%
               @else %]0.0_ki[% 
-              @end @if %], 0.0_ki)
+              @end @if %], [%
+              @if is_massive %]real([% mass %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %])
               term=term*ncs*([%charge_a%]_ki)*([%charge_j%]_ki/9.0_ki)
               term(1) = term(1) + log_s * term(2)
 
@@ -518,6 +516,9 @@ contains
    function I_ii_qed(mu_sq, vec, I, J)
       ! The result omits the factor
       ! $-\alpha_s/(2\pi)(4\pi)^\epsilon/\Gamma(1-\epsilon)$
+      ! Same V_SING_QED as for final-state pairs, with the masses of the
+      ! initial-state particles (massless: 3/2 + log(mu^2/s_ab), 1, as before)
+      use [% process_name asprefix=\_ %]model
       implicit none
       real(ki), intent(in) :: mu_sq
       real(ki), dimension(num_legs,4), intent(in) :: vec
@@ -551,9 +552,15 @@ contains
 
               ncs=1.0_ki
 
-              term(1) = ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
-              term(2) = ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
-              term(1) = term(1)*(3.0_ki/2.0_ki + log_s )
+              term = V_SING_QED(s_ab, [%
+              @if is_massive1 %]real([% mass1 %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %], [%
+              @if is_massive2 %]real([% mass2 %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %])
+              term = term*ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
+              term(1) = term(1) + log_s * term(2)
 
               I_ii_qed(:,:,1) = I_ii_qed(:,:,1) + term(1) * matrix(:,:)
               I_ii_qed(:,:,2) = I_ii_qed(:,:,2) + term(2) * matrix(:,:)
@@ -570,9 +577,15 @@ contains
                
               ncs=1.0_ki
 
-              term(1) = ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
-              term(2) = ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
-              term(1) = term(1)*(3.0_ki/2.0_ki + log_s )
+              term = V_SING_QED(s_ab, [%
+              @if is_massive1 %]real([% mass1 %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %], [%
+              @if is_massive2 %]real([% mass2 %], ki)[%
+              @else %]0.0_ki[%
+              @end @if %])
+              term = term*ncs*([%charge1%]_ki)*([%charge2%]_ki)/9.0_ki
+              term(1) = term(1) + log_s * term(2)
 
               I_ii_qed(:,:,1) = I_ii_qed(:,:,1) + term(1) * matrix(:,:)
               I_ii_qed(:,:,2) = I_ii_qed(:,:,2) + term(2) * matrix(:,:)
@@ -627,21 +640,25 @@ contains
       real(ki), intent(in) :: s_jk, m_j, m_k
       real(ki), dimension(2) :: V_SING_QED
 
-      real(ki) :: Q_jk, v_jk, rho, mu1_2, mu2_2, m1_2, m2_2
+      real(ki) :: v_jk, r_jk, m1_2, m2_2
 
       m1_2  = m_j*m_j
       m2_2  = m_k*m_k
 
       if (m_j .gt. 0.0_ki) then
                if(m_k .gt. 0.0_ki) then
-                      Q_jk  = s_jk + m1_2 + m2_2
-                      mu1_2 = m1_2 / Q_jk
-                      mu2_2 = m2_2 / Q_jk
-                      v_jk  = sqrt(lambda(1.0_ki, mu1_2, mu2_2)) &
-                            &      / (1.0_ki - mu1_2 - mu2_2)
-                      rho   = sqrt((1.0_ki - v_jk)/(1.0_ki + v_jk))
-                      ! (6.20), case 1, both massive
-                      V_SING_QED(1) = log(rho)/v_jk + 1.0_ki
+                      ! (6.20), case 1, both massive: log(rho)/v_jk + 1 with
+                      ! v_jk = sqrt(lambda(1,mu_j^2,mu_k^2))/(1-mu_j^2-mu_k^2)
+                      !      = sqrt(1 - r_jk), r_jk = 4 m_j^2 m_k^2 / s_jk^2,
+                      ! rho = sqrt((1-v_jk)/(1+v_jk)), 1 - v_jk = r_jk/(1+v_jk).
+                      ! Written with r_jk, since 1 - v_jk cancels to zero for
+                      ! light masses (e+ e-: r_jk ~ 1e-24). This is also the
+                      ! soft-photon pole of two massive legs, valid for initial-
+                      ! and final-state particles alike.
+                      r_jk = 4.0_ki * m1_2 * m2_2 / (s_jk * s_jk)
+                      v_jk = sqrt(1.0_ki - r_jk)
+                      V_SING_QED(1) = 0.5_ki * log(r_jk / (1.0_ki + v_jk)**2) &
+                            &       / v_jk + 1.0_ki
                       V_SING_QED(2) = 0.0_ki
                else
                        V_SING_QED(1) = 0.5_ki * (5.0_ki/2.0_ki+log(m1_2/s_jk))

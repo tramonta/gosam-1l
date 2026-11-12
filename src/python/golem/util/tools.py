@@ -23,6 +23,35 @@ MESSAGE =  50
 WARNING =  10
 ERROR   =   0
 
+# Models whose UV counterterms are generated internally (counterterm vertices
+# with the auxiliary field Cx), mapped to the module that computes their values:
+# "sm" = templates/common/ew_ct.f90, "sqed" = templates/common/ew_ct_sqed.f90.
+INTERNAL_CT_MODELS = {
+      "smdiag_complex_ct": "sm",
+      "sqed_ct": "sqed"
+   }
+
+def internal_ct_model(conf):
+   """
+   Return the counterterm module ("sm" or "sqed") of the model in conf
+   if its counterterms are generated internally, None otherwise.
+
+   The model is recognized by its name, from 'modeltype' or from the first
+   entry of 'model', which may also be a path to the model files.
+   """
+   names = []
+   if conf["modeltype"]:
+      names.append(conf["modeltype"])
+   model = conf.getProperty(golem.properties.model)
+   if model:
+      names.append(model[0])
+   for name in names:
+      base = os.path.basename(os.path.normpath(
+            os.path.expandvars(str(name).strip())))
+      if base in INTERNAL_CT_MODELS:
+         return INTERNAL_CT_MODELS[base]
+   return None
+
 DEFAULT_CMD_LINE_ARGS = [
       ('h', "help", "prints this help screen"),
       ('d', "debug", "prints out debug messages"),

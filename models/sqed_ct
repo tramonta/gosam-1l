@@ -1,0 +1,66 @@
+% vim: syntax=none
+
+% From Boehm, Denner, Joos
+% in Feynman Gauge
+
+[ model = 'Scalar QED' ]
+
+% Propagators:
+
+% V: EWSM gauge bosons
+[A, A,             +, notadpole; TWOSPIN=2, COLOR=1, MASS='0', WIDTH='0',
+                      AUX='0', CONJ=('+')]
+
+% leptons
+[em, ep,           -; TWOSPIN=1, COLOR=1, MASS='me', WIDTH='0',
+                      AUX='0', CONJ=('+','-')]
+[mum, mup,         -; TWOSPIN=1, COLOR=1, MASS='mmu', WIDTH='0',
+                      AUX='0', CONJ=('+','-')]
+[taum, taup,       -; TWOSPIN=1, COLOR=1, MASS='mtau', WIDTH='wtau',
+                      AUX='0', CONJ=('+','-')]
+
+% S: scalars
+[phim, phip,       +; TWOSPIN=0, COLOR=1, MASS='mW', WIDTH='0',
+                      AUX='0', CONJ=('+','-')]
+
+[Cx, Cx,           +; TWOSPIN=0, COLOR=1, MASS='0', WIDTH='0',
+                      AUX='0', CONJ=('+')]
+
+% VVSS
+[A, A, phip, phim; gs='0', gw='+2', QCD='0', QED='+2', RK='0']
+
+% VSS
+[A, phip, phim; gs='0', gw='+1', QCD='0', QED='+1', RK='1']
+
+% ffV
+[ep, em, A; gs='0', gw='+1', QCD='0', QED='+1', RK='0']
+[mup, mum, A; gs='0', gw='+1', QCD='0', QED='+1', RK='0']
+[taup, taum, A; gs='0', gw='+1', QCD='0', QED='+1', RK='0']
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                             %
+%                   EW-CT                     %
+%                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% VV
+[A, A, Cx; gs='0', gw='+2', QCD='0', QED='+2', RK='2']
+
+% SS
+[phim, phip, Cx; gs='0', gw='+2', QCD='0', QED='+2', RK='2']
+
+[ep, em, Cx; gs='0', gw='+2', QCD='0', QED='+2', RK='1']
+[mup, mum, Cx; gs='0', gw='+2', QCD='0', QED='+2', RK='1']
+[taup, taum, Cx; gs='0', gw='+2', QCD='0', QED='+2', RK='1']
+
+% VVSS
+[A, A, phip, phim, Cx; gs='0', gw='+4', QCD='0', QED='+4', RK='0']
+
+% VSS
+[A, phip, phim, Cx; gs='0', gw='+3', QCD='0', QED='+3', RK='1']
+
+% ffV
+[ep, em, A, Cx; gs='0', gw='+3', QCD='0', QED='+3', RK='0']
+[mup, mum, A, Cx; gs='0', gw='+3', QCD='0', QED='+3', RK='0']
+[taup, taum, A, Cx; gs='0', gw='+3', QCD='0', QED='+3', RK='0']

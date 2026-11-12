@@ -1,0 +1,25 @@
+# e-(k1) e+(k2) -> phi+(k3) phi-(k4) in scalar QED (model sqed_ct)
+#
+# LO:  O(alpha^2), s-channel photon
+# NLO: O(alpha^3), one-loop QED corrections with the internal on-shell
+#      counterterms of sqed_ct (templates/common/ew_ct_sqed.f90)
+#
+# Syntax reminders: no space before '=', no comments at the end of a line.
+process_name=eepp
+process_path=virtual
+# PDG codes for e-, e+; model names for the charged scalars
+in=11,-11
+out=phip,phim
+# powers of the coupling in the amplitude: e^2 at LO, e^4 at one loop
+order=gw,2,4
+# by name: the model is installed with GoSam (share/golem/models);
+# the name sqed_ct also switches on its counterterms
+model=sqed_ct
+# no self-energies on external legs (their effect is in the counterterm
+# vertices) and no tadpoles
+qgraf.options=onshell,notadpole
+# keep all masses: the default zero= would make e and mu massless
+zero=
+# keep e: the default one= is empty already, written here for clarity
+one=
+reduction_programs=ninja,golem95

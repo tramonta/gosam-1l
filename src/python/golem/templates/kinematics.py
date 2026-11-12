@@ -102,6 +102,12 @@ class KinematicsTemplate(golem.util.parser.Template):
 	
 	
 
+      # Models that set charge_convention = "physical" give each field its
+      # own electric charge (units of e/3); otherwise the Standard-Model
+      # convention is decoded by get_qed_sign.
+      physical_charges = \
+            getattr(self._model, "charge_convention", None) == "physical"
+
       def examine_particle(p, sign):
          mass    = p.getMass(zeroes)
          twospin = p.getSpin()
@@ -113,8 +119,13 @@ class KinematicsTemplate(golem.util.parser.Template):
          self._masses.append(mass)
          self._latex.append(latex)
          
-         qed_sign=get_qed_sign(p.getPDGCode(),sign)
-         self._charge.append(qed_sign*charge)
+         if physical_charges:
+            # all-incoming convention, as get_qed_sign gives for the leptons:
+            # an outgoing particle counts as an incoming antiparticle
+            self._charge.append(sign*charge)
+         else:
+            qed_sign=get_qed_sign(p.getPDGCode(),sign)
+            self._charge.append(qed_sign*charge)
          #if p.getPDGCode() > 0:
 	   #if p.getField().lower()=='u' or p.getField().lower()=='c' or p.getField().lower()=='t':
              #self._charge.append(-charge*sign)

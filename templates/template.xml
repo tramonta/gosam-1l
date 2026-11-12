@@ -240,6 +240,11 @@
                 </file>
 		<file src="ew_ct.f90" class="Multi">
 			<only if-option="generate_ct_internal" value="true"/>
+			<only if-option="internal_ct_model" value="sm"/>
+		</file>
+		<file src="ew_ct_sqed.f90" dest="ew_ct.f90" class="Multi">
+			<only if-option="generate_ct_internal" value="true"/>
+			<only if-option="internal_ct_model" value="sqed"/>
 		</file>
 		<file src="declmasses.h" class="Multi">
 			<only if-option="generate_ct_internal" value="true"/>

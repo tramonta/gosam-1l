@@ -26,6 +26,9 @@ groups.[%O%]: config.[%O%] model.[%O%] kinematics.[%O%] globalsl1.[%O%][%
    @if internal CUSTOM_SPIN2_PROP %]
 custompropagator.[%O%]: config.[%O%] model.[%O%][%
    @end @if %][%
+   @if generate_ct_internal %]
+ew_ct.[%O%]: config.[%O%] model.[%O%][%
+   @end @if %][%
 @end @for %][%
 @for each $(OBJEXTG) var=O %][%
    @if extension pjfry %]

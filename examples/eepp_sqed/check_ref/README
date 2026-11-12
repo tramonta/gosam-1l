@@ -1,0 +1,29 @@
+Comparison with reference values computed independently
+(photon mass lambda^2 = 1e-30 GeV^2, deltauv = 0, mu = 100 GeV,
+alpha(0) = 0.72973525694968e-2, me = 0.510998950e-3, mmu = 105.658375e-3,
+m_pi from the reference momenta, mtau = model default).
+
+  cd examples/eepp_sqed/check_ref  && make run            # e+e- -> pi+pi-
+  cd examples/eeppA_sqed/check_ref && python3 check_vp.py # e+e- -> pi+pi- A
+
+Both use the already compiled virtual/ libraries; parameters are set in
+check_ref.f90 before initgolem() (which runs ew_ren with them).
+
+What is compared:
+  - photon-mass result = GoSam finite part at mu^2 = lambda^2
+    (1/eps_IR -> ln(lambda^2/mu^2); no double pole, on-shell UV
+    renormalisation does not depend on mu), nlo_prefactors = 2;
+  - the reference SUMS over the e-, e+ spins: GoSam x 4;
+  - the reference has NO vacuum polarisation in the virtual photon:
+    2 Re[Pi_ren(q^2) ...] of the e, mu, tau, phi loops is subtracted
+    analytically (2->2: in check_ref.f90; 2->3: check_vp.py, with the ISR
+    (q^2 = s') and FSR (q^2 = s) tree amplitudes computed from scratch and
+    checked against the GoSam Born);
+  - GoSam leg order e-, e+, phi+, phi-, A: reference p4 (pi+) and p3 (pi-)
+    are swapped.
+
+Result (2026-11-12):
+  2->2  Born 1.7e-15,  virtual - VP  4.8e-9
+  2->3  Born 1.3e-14,  virtual - VP  1.7e-8
+  (without the VP subtraction the virtual differs by 0.87% and 0.86%).
+SOFT is not computed by GoSam and is not compared.

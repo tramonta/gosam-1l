@@ -252,8 +252,7 @@ def run_qgraf(conf, in_particles, out_particles):
 	flag_topolopy = True
 	flag_dot2tex = conf.getBooleanProperty("__dot2tex__")
 	loops_to_generate = conf.getListProperty("loops_to_generate")
-	flag_internal_ct=conf["modeltype"]=='smdiag_complex_ct' or \
-            conf.getProperty(golem.properties.model)[0]=='smdiag_complex_ct'
+	flag_internal_ct = golem.util.tools.internal_ct_model(conf) is not None
 	flag_qcd_in_ew = conf.getBooleanProperty("olp.qcd_in_ew")
 	conf["qcd_in_ew"] = flag_qcd_in_ew
 	

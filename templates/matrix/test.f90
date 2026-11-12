@@ -19,6 +19,14 @@
    real(ki), dimension(2:3) :: irp
    real(ki) :: t1, t2
 
+   integer :: n
+   integer, allocatable :: seed(:)
+   call random_seed(size=n)
+   allocate(seed(n))
+   ! imposta il seed desiderato
+   seed = 12345
+   call random_seed(put=seed)
+
    open(unit=logfile,status='unknown',action='write',file='debug.xml')
 
    open(unit=10,status='old',action='read',file='param.dat',iostat=ierr)
@@ -30,8 +38,6 @@
    end if
 
    call initgolem()
-
-   call random_seed
 
    nlo_prefactors=0  ! Do not include any NLO prefactors in order to recognize
                      ! rational numbers for the pole coefficients

@@ -577,11 +577,11 @@ def workflow(conf):
 	conf["loops_to_generate"] = loops_to_generate	  
 	conf["generate_lo_diagrams"] = generate_lo_diagrams
 	conf["generate_nlo_virt"] = generate_nlo_virt
+	internal_ct = golem.util.tools.internal_ct_model(conf)
 	conf["generate_uv_counterterms"] = (len(conf.getProperty(golem.properties.model))>1 and conf.getProperty(golem.properties.model)[1]!='../model/Standard_Model_UFO')\
-                    or conf["modeltype"]=="smdiag_complex_ct" or \
-                    conf.getProperty(golem.properties.model)[0]=='smdiag_complex_ct'
-        conf["generate_ct_internal"] = conf["modeltype"]=="smdiag_complex_ct" or \
-            conf.getProperty(golem.properties.model)[0]=='smdiag_complex_ct'
+                    or internal_ct is not None
+        conf["generate_ct_internal"] = internal_ct is not None
+        conf["internal_ct_model"] = internal_ct or "none"
         conf["qcd_in_ew"] = conf.getBooleanProperty("olp.qcd_in_ew")
 	conf["generate_nnlo_virt"] = generate_nnlo_virt
 	#generate_uv_counterterms

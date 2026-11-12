@@ -1233,7 +1233,8 @@ modelfile.write("      call ewschemechoice(ewchoice)\n")[$
 @end @if $][$
 @end @select $]
 modelfile.write("%s" % outdict['Functions'])[$
-@if generate_ct_internal $]
+@if generate_ct_internal $][$
+@select internal_ct_model @case sm $]
 modelfile.write("      ctme=me\n")
 modelfile.write("      ctmm=mmu\n")
 modelfile.write("      ctmtl=mtau\n")
@@ -1252,6 +1253,7 @@ modelfile.write("      ctZwidth=wz\n")
 modelfile.write("      ctHwidth=wh\n")
 modelfile.write("      ctTwidth=wt\n")
 modelfile.write("      ctgfermi=1.0_ki\n")[$
+@end @select $][$
 @end @if $]                                           
 modelfile.write("end subroutine init_functions\n")
 modelfile.write("!---#] subroutine init_functions:\n")

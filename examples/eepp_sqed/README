@@ -1,0 +1,41 @@
+Process e-(k1) + e+(k2) > phi+(k3) + phi-(k4) in scalar QED
+
+Model: sqed_ct (photon, e, mu, tau, a stable charged scalar phi+- of mass
+mW, auxiliary counterterm field Cx; no phi^4 vertex).
+
+LO:  O(alpha^2), s-channel photon
+NLO: O(alpha^3), one-loop QED corrections, renormalized on shell with the
+     internal counterterms of sqed_ct (templates/common/ew_ct_sqed.f90):
+     charge in the Thomson limit alpha(0), on-shell masses and fields of the
+     leptons and of phi. All masses are kept (zero= is empty in the card).
+
+Running
+-------
+GoSam must be installed in build/ of this repository (the Makefile uses
+../../build/bin/gosam.py; override with make GOSAM=...). make source and
+make compile call python 2.7:
+
+  conda activate python2.7
+  make            # generate virtual/, compile, build and run the test
+
+or pass the interpreter, e.g. make PYTHON=/path/to/python2.7.
+
+The test
+--------
+test/test.f90 evaluates two phase-space points at sqrt(s) = 500 GeV and
+checks:
+  - LO against the analytic Born,
+    |M|^2 = e^4/s^2 [2 (p1.k)(p2.k) - k^2 (p1.p2 + me^2)], k = p3 - p4;
+  - the double pole is zero;
+  - the single pole equals the soft-photon pole of massive charged legs,
+    -sum_{j,k} q_j q_k ln((1+v_jk)/(1-v_jk))/(2 v_jk) (A_jj = 1), in units
+    of alpha/(2 pi) relative to LO: the UV poles cancel against the
+    counterterms;
+  - d(finite part)/d(ln mu^2) equals the single pole;
+  - ir_subtraction gives the same poles (QED insertion operator with the
+    masses of the initial-state electrons).
+The finite part is printed but not compared with an independent result.
+
+Observed agreement: LO to 1e-15, single pole to 1e-13 (with the physical
+electron mass). In the soft formula the masses are taken from the model:
+computing m_e^2 as E^2 - |p|^2 would lose all its digits.
