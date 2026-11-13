@@ -582,6 +582,12 @@ def workflow(conf):
                     or internal_ct is not None
         conf["generate_ct_internal"] = internal_ct is not None
         conf["internal_ct_model"] = internal_ct or "none"
+        # vacuum polarisation of internal photons (default: included);
+        # normalised here, read by topolopy/functions.py and ew_ct_sqed.f90
+        vacpol = conf.getBooleanProperty(golem.properties.vacuum_polarisation, True)
+        conf[str(golem.properties.vacuum_polarisation)] = "true" if vacpol else "false"
+        if not vacpol and internal_ct != "sqed":
+                golem.util.tools.error("vacpol=false is implemented only for the model sqed_ct.")
         conf["qcd_in_ew"] = conf.getBooleanProperty("olp.qcd_in_ew")
 	conf["generate_nnlo_virt"] = generate_nnlo_virt
 	#generate_uv_counterterms

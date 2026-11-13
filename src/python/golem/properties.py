@@ -724,6 +724,24 @@ filter_nlo_diagrams = Property("filter.nlo",
    """,
    str,"")
 
+vacuum_polarisation = Property("vacpol",
+   """\
+   Include the vacuum polarisation of internal photons (default true).
+
+   With vacpol=false the closed loops of charged matter are dropped
+   (loop diagrams without a photon in the loop: lepton and scalar
+   bubbles on photon lines, Furry-vanishing photon triangles), on top of
+   filter.nlo, and the photon two-point counterterm is removed
+   (vacpol = .false. in common/ew_ct.f90: dZ_AA = dZ_e = 0). Together
+   they form a gauge-invariant, UV-finite set.
+
+   Only for the model sqed_ct (internal_ct_model=sqed).
+
+   Example:
+   vacpol=false
+   """,
+   bool, True)
+
 filter_higher_diagrams = Property("filter.higher",
    """\
    A list of python functions which provide a filter for loop diagrams.
@@ -1255,6 +1273,7 @@ properties = [
    filter_nlo_diagrams,
    filter_higher_diagrams,
    filter_module,
+   vacuum_polarisation,
 
    config_renorm_beta,
    config_renorm_mqwf,

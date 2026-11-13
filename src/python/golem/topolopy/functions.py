@@ -123,11 +123,19 @@ def setup_filter(prop, conf, model, loop_order=None):
 
    if len(fltr.strip()):
       try:
-         return eval(fltr, globs)
+         user_fltr = eval(fltr, globs)
       except SyntaxError as ex:
          error("Option %s is not a valid expression" % prop)
    else:
-      return lambda d: True
+      user_fltr = lambda d: True
+
+   # vacpol=false (model sqed_ct): drop the one-loop diagrams without a
+   # photon in the loop, i.e. the closed loops of charged matter
+   if prop is golem.properties.filter_nlo_diagrams and \
+         not conf.getBooleanProperty(golem.properties.vacuum_polarisation, True):
+      photon = globs["A"]
+      return lambda d: user_fltr(d) and d.chord(photon) > 0
+   return user_fltr
 
 def analyze_tree_diagrams(diagrams, model, conf, filter_flags = None):
    zero = golem.util.tools.getZeroes(conf)

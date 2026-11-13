@@ -49,6 +49,9 @@ class MultiTemplate(Template):
                      result.append(props)
 
                return result
+            elif option.getType() == bool:
+               # a string, as the other templates see it (convert=bool, @if)
+               return "true" if value else "false"
             else:
                return self._conf.getProperty(option)
                

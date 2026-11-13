@@ -33,6 +33,13 @@
 !      AA phi phi gctAAPP = 2 ( 2 dZ_e + dZ_AA + dZ_phi )
 !      A l l     gctAl = gctAr = -Q ( dZ_e + dZ_AA/2 + dZ_l ),  Q = -1
 !    No A-Z mixing, no tadpole, no phi^4 vertex.
+!  - vacpol = .false. (card option vacpol=false) sets dZ_AA = dZ_e = 0.
+!    dZ_AA enters only gctA (the vertices contain dZ_e + dZ_AA/2 = 0), so
+!    this removes the photon two-point counterterm. The same card option
+!    drops the closed loops of leptons and phi (loop diagrams without a
+!    photon in the loop, topolopy/functions.py): together they switch off
+!    the vacuum polarisation of internal photons, a gauge-invariant,
+!    UV-finite set.
 !
       implicit none
       private
@@ -40,7 +47,10 @@
       ! phi field renormalization, coefficient C1 of the phi phi counterterm;
       ! not in dzdecl.h because the Standard Model has no such counterterm
       complex*16, dimension(1:2) :: gctphi1 = (0.d0, 0.d0)
-      public :: ew_ren, ddrr, gctphi1
+      ! .false.: no photon two-point counterterm (dZ_AA = dZ_e = 0);
+      ! set by the card option vacpol, consistent with the diagrams kept
+      logical, parameter :: vacpol = .[% vacpol %].
+      public :: ew_ren, ddrr, gctphi1, vacpol
 contains
 
       subroutine ew_ren()
@@ -86,6 +96,7 @@ contains
          call olo(b0, zero, mphi2, mphi2)
          dza(:) = dza(:) - a * 1.d0/3.d0 * b0(0:1)
       end if
+      if (.not. vacpol) dza(:) = zero
       dze(:) = -0.5d0 * dza(:)
 
       ! charged leptons: mass and wave function (photon loop only)

@@ -27,3 +27,31 @@ Result (2026-11-12):
   2->3  Born 1.3e-14,  virtual - VP  1.7e-8
   (without the VP subtraction the virtual differs by 0.87% and 0.86%).
 SOFT is not computed by GoSam and is not compared.
+
+Variant without vacuum polarisation in GoSam
+--------------------------------------------
+eepp_novp.rc / eeppA_novp.rc (process_path=virtual_novp) add the card
+option
+  vacpol=false
+(model sqed_ct only), which
+  - drops the one-loop diagrams without a photon in the loop, i.e. the
+    closed loops of leptons and phi (bubbles on the photon line, the phi
+    seagull snail, the 3-photon triangles of 2->3 that sum to zero by
+    Furry/C), on top of any filter.nlo;
+  - sets the Fortran parameter vacpol = .false. in common/ew_ct.f90
+    (ew_ct_sqed.f90), so dZ_AA = dZ_e = 0. dZ_AA enters only the photon
+    two-point counterterm gctA, because dZ_e + dZ_AA/2 = 0 in the vertices.
+The counterterm diagrams are not filtered (they use filter.lo).
+
+  cd examples/eepp_sqed  && ../../build/bin/gosam.py eepp_novp.rc \
+       && make -C virtual_novp source compile        # python 2.7 in PATH
+  cd examples/eeppA_sqed && ../../build/bin/gosam.py eeppA_novp.rc \
+       && make -C virtual_novp source compile
+  cd examples/eepp_sqed/check_ref  && make run NOVP=1
+  cd examples/eeppA_sqed/check_ref && make run NOVP=1   # or python3 check_vp.py
+
+Result (2026-11-12): same numbers as the analytic subtraction,
+  2->2 virtual 4.8e-9, 2->3 virtual 1.7e-8 relative to the reference,
+  poles unchanged (UV still cancels), and the VP of GoSam
+  (full - no-VP) equals the formula to 4e-14 in 2->3 (ISR + FSR, with
+  the imaginary parts).

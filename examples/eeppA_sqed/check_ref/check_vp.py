@@ -11,10 +11,13 @@ M_ISR and M_FSR are computed here from the Feynman rules of scalar QED
 (explicit spinors, Dirac representation); |M_ISR + M_FSR|^2 is checked
 against the Born from GoSam. Spin sums over e-, e+ (as the reference).
 
-Usage: python3 check_vp.py   (builds and runs ./check_ref first)
+Usage: python3 check_vp.py   (builds and runs ./check_ref first; if
+../virtual_novp exists, also the variant without vacuum polarisation, and
+compares GoSam full - no-VP with the formula)
 """
 import cmath
 import math
+import os
 import re
 import subprocess
 
@@ -210,6 +213,13 @@ def main():
     corr = gosam_virt4 - vp
     print(" 4*VIRT GoSam - VP                 : %.15e  ref: %.15e  rel %.2e"
           % (corr, virt_ref, corr / virt_ref - 1))
+    if os.path.isdir("../virtual_novp"):
+        out = subprocess.run(["make", "-s", "run", "NOVP=1"], capture_output=True, text=True).stdout
+        novp = float(re.search(r"4\*VIRT\s+GoSam, ref, rel.diff:\s+(\S+)", out).group(1))
+        print(" 4*VIRT GoSam no-VP (virtual_novp) : %.15e  ref: %.15e  rel %.2e"
+              % (novp, virt_ref, novp / virt_ref - 1))
+        print(" VP in GoSam (full - no-VP)        : %.15e  formula: %.15e  rel %.2e"
+              % (gosam_virt4 - novp, vp, (gosam_virt4 - novp) / vp - 1))
 
 
 if __name__ == "__main__":

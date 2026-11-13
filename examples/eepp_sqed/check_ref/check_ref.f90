@@ -19,6 +19,10 @@ program check_ref
 use PROC_config, only: ki, nlo_prefactors
 use PROC_matrix, only: initgolem, exitgolem, samplitude
 use PROC_model, only: alpha, me, mmu, mtau, mW
+#ifdef NOVP
+! process generated with PROC_novp.rc (vacpol=false, in virtual_novp/)
+use PROC_ew_ct, only: vacpol
+#endif
 implicit none
 integer, parameter :: N = NLEG
 real(ki), parameter :: lambda2 = 1.0e-30_ki
@@ -42,6 +46,10 @@ vecs = ref
 vecs(3,:) = ref(4,:)   ! phi+ = pi+
 vecs(4,:) = ref(3,:)   ! phi- = pi-  (5th leg, if any: the photon)
 
+#ifdef NOVP
+if (vacpol) stop "virtual_novp was not generated with vacpol=false"
+write(*,'(A)') " variant: NO vacuum polarisation (virtual_novp, vacpol=false)"
+#endif
 call initgolem()        ! init_functions + ew_ren with the values above
 nlo_prefactors = 2
 
@@ -56,7 +64,12 @@ write(*,'(A,ES23.15)') " m_tau   = ", mtau
 write(*,'(A,I3)')      " prec    = ", prec
 write(*,'(A,2ES23.15,ES11.2)') " BORN     GoSam, ref, rel.diff: ", amp(0), born_ref, amp(0)/born_ref-1
 write(*,'(A,2ES23.15,ES11.2)') " VIRTUAL  GoSam, ref, rel.diff: ", amp(1), virt_ref, amp(1)/virt_ref-1
+#ifdef NOVP
+vp = 0.0_ki
+if (.false.) then
+#else
 if (N == 4) then
+#endif
 vp = 2.0_ki*(pif(me) + pif(mmu) + pif(mtau) + pis(mW))
 write(*,'(A,ES23.15)')         " 2 Re Pi(s), e+mu+tau+pi:      ", vp
 write(*,'(A,2ES23.15,ES11.2)') " 4*BORN   GoSam, ref, rel.diff: ", 4*amp(0), born_ref, 4*amp(0)/born_ref-1
